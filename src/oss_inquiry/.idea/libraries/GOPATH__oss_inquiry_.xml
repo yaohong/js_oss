@@ -1,0 +1,30 @@
+<component name="libraryTable">
+  <library name="GOPATH &lt;oss_inquiry&gt;">
+    <CLASSES>
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/world_server" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/MonitorServer" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/mailServer" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/oss" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+    <excluded>
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/golang/protobuf/.git" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/golang/protobuf/protoc-gen-go/testdata" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/golang/lint/testdata" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/nsf/gocode/.git" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/MonitorServer/.idea" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/golang/protobuf/proto/testdata" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/nsf/gocode/_gccgo" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/go-sql-driver/MySQL/.git" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/nsf/gocode/_goremote" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/mailServer/.idea" />
+      <root url="file://$PROJECT_DIR$" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/rogpeppe/godef/go/printer/testdata" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/nsf/gocode/_testing" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/oss/.idea" />
+      <root url="file://D:/p4_work/zombiebrother/master/server/go/src/github.com/axgle/mahonia/.git" />
+    </excluded>
+  </library>
+</component>
