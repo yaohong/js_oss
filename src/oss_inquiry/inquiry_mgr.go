@@ -42,7 +42,7 @@ type InquiryMgr struct {
 
 
 
-func NewInquiryMgr() *InquiryItem {
+func NewInquiryMgr() *InquiryMgr {
 	return &InquiryMgr{
 		inquiryItems: make(map[string] *InquiryItem),
 		idAlloc: 0,
@@ -59,14 +59,6 @@ func (self *InquiryMgr)generateInquiryId() int64{
 
 
 func (self *InquiryMgr)Inquiry_MissionNormalFailed(startTime string, endTime string) (id int64, isSuccess bool) {
-	_, ok := self.inquiryItems[key]
-	if ok {
-		return 0, false
-	}
 
-	item := NewInquiryItem(key, self.generateInquiryId())
-	self.inquiryItems[key] = item
-
-
-	return item.Id(), false
+	return 0, false
 }
