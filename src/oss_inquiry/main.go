@@ -133,7 +133,7 @@ func handle_missionNormalFailed(startTime string ,endTime string) error {
 	}
 
 	for k, v:= range datas {
-		fmt.Fprintf(f, "%s,%d\n", k, v)
+		fmt.Fprintf(f, "%s|%d\n", k, v)
 	}
 
 	f.Close()
@@ -149,9 +149,9 @@ func handle_missionNormalCount(startTime string ,endTime string) error {
 
 	offset := 0
 	step := 5000
-	datas := make(map[string] map[string]int, 10)
+	datas := make(map[string] int, 10)
 	for {
-		sqlStr := fmt.Sprintf("select id, created_time from 137_mission_normal where created_time > '%s' and created_time < '%s' limit %d, %d", startTime, endTime,  offset, step)
+		sqlStr := fmt.Sprintf("select created_time from 137_mission_normal where created_time > '%s' and created_time < '%s' limit %d, %d", startTime, endTime,  offset, step)
 		rows ,err := db.Query(sqlStr)
 		if err != nil {
 			fmt.Println(err)
@@ -160,9 +160,9 @@ func handle_missionNormalCount(startTime string ,endTime string) error {
 
 		num := 0
 		for rows.Next() {
-			var id, createTime string
+			var createTime string
 
-			err = rows.Scan(&id, &createTime)
+			err = rows.Scan(&createTime)
 			if err != nil {
 				return err
 			}
@@ -171,19 +171,13 @@ func handle_missionNormalCount(startTime string ,endTime string) error {
 			if len(timeValue) != 2 {
 				return errors.New("createTime value error," + createTime)
 			}
+			bigTime := timeValue[0]
 
-			childMap, ok := datas[timeValue[0]]
+			oldCount, ok := datas[bigTime]
 			if ok {
-				OldCount, ok1 := childMap[id]
-				if ok1 {
-					childMap[id] = OldCount + 1
-				} else {
-					childMap[id] = 1
-				}
+				datas[bigTime] = oldCount  + 1
 			} else {
-				childMap = make(map[string]int, 500)
-				childMap[id] = 1
-				datas[timeValue[0]] = childMap
+				datas[bigTime] = 1
 			}
 
 			num++
@@ -204,9 +198,7 @@ func handle_missionNormalCount(startTime string ,endTime string) error {
 	}
 
 	for k, v:= range datas {
-		for k1, v1 := range v {
-			fmt.Fprintf(f, "%s,%s,%d\n", k, k1, v1)
-		}
+		fmt.Fprintf(f, "%s|%d\n", k, v)
 	}
 
 	f.Close()
@@ -265,7 +257,7 @@ func handle_missionEliteFailed(startTime string ,endTime string) error {
 	}
 
 	for k, v:= range datas {
-		fmt.Fprintf(f, "%s,%d\n", k, v)
+		fmt.Fprintf(f, "%s|%d\n", k, v)
 	}
 
 	f.Close()
@@ -281,9 +273,9 @@ func handle_missionEliteCount(startTime string ,endTime string) error {
 
 	offset := 0
 	step := 5000
-	datas := make(map[string] map[string]int, 10)
+	datas := make(map[string] int, 10)
 	for {
-		sqlStr := fmt.Sprintf("select id, created_time from 137_mission_elite where created_time > '%s' and created_time < '%s' limit %d, %d", startTime, endTime,  offset, step)
+		sqlStr := fmt.Sprintf("select created_time from 137_mission_elite where created_time > '%s' and created_time < '%s' limit %d, %d", startTime, endTime,  offset, step)
 		rows ,err := db.Query(sqlStr)
 		if err != nil {
 			fmt.Println(err)
@@ -292,9 +284,9 @@ func handle_missionEliteCount(startTime string ,endTime string) error {
 
 		num := 0
 		for rows.Next() {
-			var id, createTime string
+			var createTime string
 
-			err = rows.Scan(&id, &createTime)
+			err = rows.Scan(&createTime)
 			if err != nil {
 				return err
 			}
@@ -303,19 +295,13 @@ func handle_missionEliteCount(startTime string ,endTime string) error {
 			if len(timeValue) != 2 {
 				return errors.New("createTime value error," + createTime)
 			}
+			bigTime := timeValue[0]
 
-			childMap, ok := datas[timeValue[0]]
+			oldCount, ok := datas[bigTime]
 			if ok {
-				OldCount, ok1 := childMap[id]
-				if ok1 {
-					childMap[id] = OldCount + 1
-				} else {
-					childMap[id] = 1
-				}
+				datas[bigTime] = oldCount + 1
 			} else {
-				childMap = make(map[string]int, 500)
-				childMap[id] = 1
-				datas[timeValue[0]] = childMap
+				datas[bigTime] = 1
 			}
 
 			num++
@@ -336,9 +322,98 @@ func handle_missionEliteCount(startTime string ,endTime string) error {
 	}
 
 	for k, v:= range datas {
-		for k1, v1 := range v {
-			fmt.Fprintf(f, "%s,%s,%d\n", k, k1, v1)
+		fmt.Fprintf(f, "%s|%d\n", k, v)
+	}
+
+	f.Close()
+	return nil
+}
+
+type UserTowerMax struct {
+	DeviceId string
+	Id string
+	Heroes string
+	Score int
+	Floor int
+	CreateTime string
+}
+
+func NewUserTowerMax(deviceId string, id string, heroes string, score int, floor int, createTime string) *UserTowerMax {
+	return &UserTowerMax {
+		DeviceId: deviceId,
+		Id: id,
+		Heroes: heroes,
+		Score: score,
+		Floor: floor,
+		CreateTime: createTime,
+	}
+}
+
+
+func (self *UserTowerMax)compareFloor(floor int) bool {
+	return floor > self.Floor
+}
+
+func handle_missionTowerMax(startTime string ,endTime string) error {
+	fmt.Println("handle_missionTowerMax")
+	db, err := CreateDbConnect()
+	if err != nil {
+		fmt.Println("connect failed.")
+	}
+
+	offset := 0
+	step := 5000
+	allData := make(map[string]*UserTowerMax, 1000)
+	for {
+		sqlStr := fmt.Sprintf(
+			"select user_id,device_id,id,heroes,score,floor,created_time from 137_mission_tower where created_time > '%s' and created_time < '%s' and re!=-1 limit %d, %d",
+			startTime, endTime,  offset, step)
+		rows ,err := db.Query(sqlStr)
+		if err != nil {
+			fmt.Println(err)
+			break
 		}
+
+		num := 0
+		for rows.Next() {
+			var user_id, device_id, id, heroes, createTime string
+			var score, floor int
+			err = rows.Scan(&user_id, &device_id, &id, &heroes, &score, &floor, &createTime)
+			if err != nil {
+				return err
+			}
+
+			old, ok := allData[user_id]
+			if ok {
+				if old.compareFloor(floor) {
+					data := NewUserTowerMax(device_id, id, heroes, score, floor, createTime)
+					allData[user_id] = data
+				}
+			} else {
+				data := NewUserTowerMax(device_id, id, heroes, score, floor, createTime)
+				allData[user_id] = data
+			}
+
+
+			num++
+		}
+		rows.Close()
+
+		if num < step {
+			break
+		}
+
+		offset = offset + step
+	}
+
+	fileName := time.Now().Format("missionTowerMax#2006-01-02_15:04:05.csv")
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+
+	for k, v:= range allData {
+		fmt.Fprintf(f, "%s|%s|%s|%s|%d|%d|%s\n", k, v.DeviceId, v.Id, v.Heroes, v.Score, v.Floor, v.CreateTime)
 	}
 
 	f.Close()
@@ -346,25 +421,258 @@ func handle_missionEliteCount(startTime string ,endTime string) error {
 }
 
 
-func handle_missionTowerMax(startTime string ,endTime string) error {
+type ExcellentUser struct {
+	UserId string
+	Floor int
+	Score int
+}
 
-	return nil
+func NewExcellentUser(userId string, floor int, score int) *ExcellentUser {
+	return &ExcellentUser{
+		UserId: userId,
+		Floor: floor,
+		Score: score,
+	}
+}
+
+
+func (self *ExcellentUser)Replace(userId string, floor int, score int) {
+	if self.Floor > floor {
+
+	} else if self.Floor == floor {
+		if self.Score >= score {
+
+		} else {
+			self.Score = score
+			self.UserId = userId
+		}
+	} else {
+		self.Floor = floor
+		self.Score = score
+		self.UserId = userId
+	}
 }
 
 func handle_missionTowerCount(startTime string ,endTime string) error {
+	fmt.Println("handle_missionTowerCount")
+	db, err := CreateDbConnect()
+	if err != nil {
+		fmt.Println("connect failed.")
+	}
 
+	offset := 0
+	step := 5000
+	countMap := make(map[string] int, 10)
+	mostExcellentMap := make(map[string] *ExcellentUser, 10)
+	for {
+		sqlStr := fmt.Sprintf(
+			"select created_time,id,user_id,floor,score from 137_mission_tower where created_time > '%s' and created_time < '%s' and re!=-1 limit %d, %d",
+			startTime, endTime,  offset, step)
+		rows ,err := db.Query(sqlStr)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		num := 0
+		for rows.Next() {
+			var createTime, id, user_id string
+			var floor,score int
+			err = rows.Scan(&createTime, &id, &user_id, &floor, &score)
+			if err != nil {
+				return err
+			}
+
+			timeValue := strings.Split(createTime, " ")
+			if len(timeValue) != 2 {
+				return errors.New("createTime value error," + createTime)
+			}
+
+			bigTime := timeValue[0]
+			OldCount, ok := countMap[bigTime]
+			if ok {
+				countMap[bigTime] = OldCount + 1
+			} else {
+				countMap[bigTime] = 1
+			}
+
+			mostExcellent, ok1 := mostExcellentMap[bigTime]
+			if ok1 {
+				mostExcellent.Replace(user_id, floor, score)
+			} else {
+				mostExcellentMap[bigTime] = NewExcellentUser(user_id, floor, score)
+			}
+
+
+			num++
+		}
+		rows.Close()
+
+		if num < step {
+			break
+		}
+
+		offset = offset + step
+	}
+
+	fileName := time.Now().Format("missionTowerCount#2006-01-02_15:04:05.csv")
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+
+	for k, v:= range countMap {
+		v1, _ := mostExcellentMap[k]
+		fmt.Fprintf(f, "%s|%d|%s|%d|%d\n", k, v, v1.UserId, v1.Floor, v1.Score)
+	}
+
+	f.Close()
 	return nil
 }
 
 func handle_missionSeasonMax(startTime string ,endTime string) error {
+	fmt.Println("handle_missionSeasonMax")
+	db, err := CreateDbConnect()
+	if err != nil {
+		fmt.Println("connect failed.")
+	}
 
+	offset := 0
+	step := 5000
+	allData := make(map[string]*UserTowerMax, 1000)
+	for {
+		sqlStr := fmt.Sprintf(
+			"select user_id,device_id,id,heroes,score,floor,created_time from 137_mission_season where created_time > '%s' and created_time < '%s' and re!=-1 limit %d, %d",
+			startTime, endTime,  offset, step)
+		rows ,err := db.Query(sqlStr)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		num := 0
+		for rows.Next() {
+			var user_id, device_id, id, heroes, createTime string
+			var score, floor int
+			err = rows.Scan(&user_id, &device_id, &id, &heroes, &score, &floor, &createTime)
+			if err != nil {
+				return err
+			}
+
+			old, ok := allData[user_id]
+			if ok {
+				if old.compareFloor(floor) {
+					data := NewUserTowerMax(device_id, id, heroes, score, floor, createTime)
+					allData[user_id] = data
+				}
+			} else {
+				data := NewUserTowerMax(device_id, id, heroes, score, floor, createTime)
+				allData[user_id] = data
+			}
+
+
+			num++
+		}
+		rows.Close()
+
+		if num < step {
+			break
+		}
+
+		offset = offset + step
+	}
+
+	fileName := time.Now().Format("missionSeasonMax#2006-01-02_15:04:05.csv")
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+
+	for k, v:= range allData {
+		fmt.Fprintf(f, "%s|%s|%s|%s|%d|%d|%s\n", k, v.DeviceId, v.Id, v.Heroes, v.Score, v.Floor, v.CreateTime)
+	}
+
+	f.Close()
 	return nil
 }
 
 func handle_missionSeasonCount(startTime string ,endTime string) error {
+	fmt.Println("handle_missionSeasonCount")
+	db, err := CreateDbConnect()
+	if err != nil {
+		fmt.Println("connect failed.")
+	}
 
+	offset := 0
+	step := 5000
+	countMap := make(map[string] int, 10)
+	mostExcellentMap := make(map[string] *ExcellentUser, 10)
+	for {
+		sqlStr := fmt.Sprintf(
+			"select created_time,id,user_id,floor,score from 137_mission_season where created_time > '%s' and created_time < '%s' and re!=-1 limit %d, %d",
+			startTime, endTime,  offset, step)
+		rows ,err := db.Query(sqlStr)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		num := 0
+		for rows.Next() {
+			var createTime, id, user_id string
+			var floor,score int
+			err = rows.Scan(&createTime, &id, &user_id, &floor, &score)
+			if err != nil {
+				return err
+			}
+
+			timeValue := strings.Split(createTime, " ")
+			if len(timeValue) != 2 {
+				return errors.New("createTime value error," + createTime)
+			}
+
+			bigTime := timeValue[0]
+			OldCount, ok := countMap[bigTime]
+			if ok {
+				countMap[bigTime] = OldCount + 1
+			} else {
+				countMap[bigTime] = 1
+			}
+
+			mostExcellent, ok1 := mostExcellentMap[bigTime]
+			if ok1 {
+				mostExcellent.Replace(user_id, floor, score)
+			} else {
+				mostExcellentMap[bigTime] = NewExcellentUser(user_id, floor, score)
+			}
+
+
+			num++
+		}
+		rows.Close()
+
+		if num < step {
+			break
+		}
+
+		offset = offset + step
+	}
+
+	fileName := time.Now().Format("missionSeasonCount#2006-01-02_15:04:05.csv")
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+
+	for k, v:= range countMap {
+		v1, _ := mostExcellentMap[k]
+		fmt.Fprintf(f, "%s|%d|%s|%d|%d\n", k, v, v1.UserId, v1.Floor, v1.Score)
+	}
+
+	f.Close()
 	return nil
 }
+
 
 func handle_missionTowerInsprite(startTime string ,endTime string) error {
 	fmt.Println("handle_missionTowerInsprite")
@@ -396,7 +704,7 @@ func handle_missionTowerInsprite(startTime string ,endTime string) error {
 			if err != nil {
 				return err
 			}
-			fmt.Fprintf(f, "%d,%s,%d,%s,%s\n", id, device_id, time1, user_id, created_time)
+			fmt.Fprintf(f, "%d|%s|%d|%s|%s\n", id, device_id, time1, user_id, created_time)
 
 			num++
 		}
@@ -443,7 +751,7 @@ func handle_missionTowerTimes(startTime string ,endTime string) error {
 			if err != nil {
 				return err
 			}
-			fmt.Fprintf(f, "%d,%s,%d,%d,%s,%s\n", id, device_id, mode, time1, user_id, created_time)
+			fmt.Fprintf(f, "%d|%s|%d|%d|%s|%s\n", id, device_id, mode, time1, user_id, created_time)
 
 			num++
 		}
