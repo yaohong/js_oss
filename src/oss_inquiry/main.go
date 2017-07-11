@@ -19,7 +19,7 @@ const (
 )
 
 func main() {
-	fmt.Println(time.Now().Format("2006-01-02"))
+	fmt.Println(time.Now().Format("dasdads#2006-01-02"))
 	//	http.HandleFunc("/inquiry", inquiry)
 	//
 	//	err := http.ListenAndServe(":8889", nil)
@@ -126,7 +126,7 @@ func handle_missionNormalFailed(startTime string ,endTime string) error {
 		offset = offset + step
 	}
 
-	fileName := time.Now().Format("missionNormalFailed_2006-01-02_15:04:05.csv")
+	fileName := time.Now().Format("missionNormalFailed#2006-01-02_15:04:05.csv")
 	f, err := os.Create(fileName)
 	if err != nil {
 		return err
@@ -197,7 +197,7 @@ func handle_missionNormalCount(startTime string ,endTime string) error {
 		offset = offset + step
 	}
 
-	fileName := time.Now().Format("missionNormalCount_2006-01-02_15:04:05.csv")
+	fileName := time.Now().Format("missionNormalCount#2006-01-02_15:04:05.csv")
 	f, err := os.Create(fileName)
 	if err != nil {
 		return err
@@ -258,7 +258,7 @@ func handle_missionEliteFailed(startTime string ,endTime string) error {
 		offset = offset + step
 	}
 
-	fileName := time.Now().Format("missionEliteFailed_2006-01-02_15:04:05.csv")
+	fileName := time.Now().Format("missionEliteFailed#2006-01-02_15:04:05.csv")
 	f, err := os.Create(fileName)
 	if err != nil {
 		return err
@@ -329,7 +329,7 @@ func handle_missionEliteCount(startTime string ,endTime string) error {
 		offset = offset + step
 	}
 
-	fileName := time.Now().Format("missionEliteCount_2006-01-02_15:04:05.csv")
+	fileName := time.Now().Format("missionEliteCount#2006-01-02_15:04:05.csv")
 	f, err := os.Create(fileName)
 	if err != nil {
 		return err
@@ -367,16 +367,142 @@ func handle_missionSeasonCount(startTime string ,endTime string) error {
 }
 
 func handle_missionTowerInsprite(startTime string ,endTime string) error {
+	fmt.Println("handle_missionTowerInsprite")
+	db, err := CreateDbConnect()
+	if err != nil {
+		fmt.Println("connect failed.")
+	}
 
+	offset := 0
+	step := 5000
+	fileName := time.Now().Format("missionTowerInsprite#2006-01-02_15:04:05.csv")
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	for {
+		sqlStr := fmt.Sprintf("select auto_id,device_id,time,user_id,created_time from 137_mission_tower_insprite where created_time > '%s' and created_time < '%s' limit %d, %d", startTime, endTime,  offset, step)
+		rows ,err := db.Query(sqlStr)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		num := 0
+		for rows.Next() {
+			var device_id,user_id,created_time string
+			var id,time1 int
+			err = rows.Scan(&id, &device_id, &time1, &user_id, &created_time)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(f, "%d,%s,%d,%s,%s\n", id, device_id, time1, user_id, created_time)
+
+			num++
+		}
+		rows.Close()
+
+		if num < step {
+			break
+		}
+
+		offset = offset + step
+	}
+
+	f.Close()
 	return nil
 }
 
 func handle_missionTowerTimes(startTime string ,endTime string) error {
+	fmt.Println("handle_missionTowerTimes")
+	db, err := CreateDbConnect()
+	if err != nil {
+		fmt.Println("connect failed.")
+	}
 
+	offset := 0
+	step := 5000
+	fileName := time.Now().Format("missionTowerTimes#2006-01-02_15:04:05.csv")
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	for {
+		sqlStr := fmt.Sprintf("select auto_id,device_id,mode,time,user_id,created_time from 137_mission_tower_times where created_time > '%s' and created_time < '%s' limit %d, %d", startTime, endTime,  offset, step)
+		rows ,err := db.Query(sqlStr)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		num := 0
+		for rows.Next() {
+			var device_id,user_id,created_time string
+			var mode, id,time1 int
+			err = rows.Scan(&id, &device_id, &mode, &time1, &user_id, &created_time)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(f, "%d,%s,%d,%d,%s,%s\n", id, device_id, mode, time1, user_id, created_time)
+
+			num++
+		}
+		rows.Close()
+
+		if num < step {
+			break
+		}
+
+		offset = offset + step
+	}
+
+	f.Close()
 	return nil
 }
 
 func handle_missionChest(startTime string ,endTime string) error {
+	fmt.Println("handle_missionChest")
+	db, err := CreateDbConnect()
+	if err != nil {
+		fmt.Println("connect failed.")
+	}
 
+	offset := 0
+	step := 5000
+	fileName := time.Now().Format("missionChest#2006-01-02_15:04:05.csv")
+	f, err := os.Create(fileName)
+	if err != nil {
+		return err
+	}
+	for {
+		sqlStr := fmt.Sprintf("select auto_id,chests,device_id,id,user_id,created_time from 137_mission_chest where created_time > '%s' and created_time < '%s' limit %d, %d", startTime, endTime,  offset, step)
+		rows ,err := db.Query(sqlStr)
+		if err != nil {
+			fmt.Println(err)
+			break
+		}
+
+		num := 0
+		for rows.Next() {
+			var chests,device_id,id,user_id,created_time string
+			var auto_id int
+			err = rows.Scan(&auto_id, &chests, &device_id, &id, &user_id, &created_time)
+			if err != nil {
+				return err
+			}
+			fmt.Fprintf(f, "%d|%s|%s|%s|%s|%s\n", auto_id, chests, device_id, id, user_id, created_time)
+
+			num++
+		}
+		rows.Close()
+
+		if num < step {
+			break
+		}
+
+		offset = offset + step
+	}
+
+	f.Close()
 	return nil
 }
