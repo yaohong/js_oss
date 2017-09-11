@@ -9,6 +9,7 @@ import (
 	"log"
 	"reflect"
 	"encoding/json"
+	"simplejson"
 )
 
 
@@ -251,6 +252,46 @@ func (self *TableMgr)InsertTableData(tableName string, tableField map[string]int
 	return nil
 }
 
+
+
+func (self *TableMgr)UseCdk(cdk string) ([]byte, error) {
+	sqlStr := fmt.Sprintf("select coins, stones from game_cdk where pack_key='%s''", cdk)
+	rows ,err := self.db.Query(sqlStr)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	var coins, stones int
+	if !rows.Next() {
+		//CDK不存在
+		js := simplejson.New()
+		js.Set("re", "0")
+		return js.MarshalJSON()
+	} else {
+		err = rows.Scan(&coins, &stones)
+		if err != nil {
+			return nil, err
+		}
+
+		//刪除記錄
+		delSql := fmt.Sprintf("delete from game_cdk where pack_key='%s'", cdk)
+		_, err := self.db.Exec(delSql)
+		if err !=nil {
+			return nil, err
+		}
+
+		vJs := simplejson.New()
+		vJs.Set("0", coins)
+		vJs.Set("1", stones)
+
+		rootJs := simplejson.New()
+		rootJs.Set("re", "0")
+		rootJs.Set("items", vJs)
+
+		return rootJs.MarshalJSON()
+	}
+}
 
 func transformMysqlFieldType(fa *fieldAttr) (string, error) {
 	switch fa.fieldType.fType {

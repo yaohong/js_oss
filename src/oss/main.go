@@ -43,7 +43,7 @@ func main() {
 	http.HandleFunc("/insertData", ossInsertData)
 	http.HandleFunc("/insertData2", ossInsertData2)
 	http.HandleFunc("/deleteTable", ossDeleteTable)
-
+	http.HandleFunc("/gameCDK", useCdk)
 	err = http.ListenAndServe(":8888", nil)
 	if err != nil {
 		log.Fatal("ListenAndServe: ", err)

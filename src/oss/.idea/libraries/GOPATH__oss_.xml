@@ -17,12 +17,15 @@
       <root url="file://F:/OneDrive/go/go_work/src/protoc.exe" />
       <root url="file://F:/OneDrive/go/go_work/src/compile_proto.bat" />
       <root url="file://F:/OneDrive/go/go_work/src/go_channel" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/dircache" />
       <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/csv" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/dirserver" />
       <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/gsserver" />
       <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/MonitorServer" />
       <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/oss" />
       <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/world_server" />
       <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/github.com" />
+      <root url="file://$PROJECT_DIR$/../oss.rar" />
       <root url="file://F:/OneDrive/go/go_work/src/protoc-gen-go.exe" />
       <root url="file://F:/OneDrive/go/go_work/src/github.com" />
     </CLASSES>
@@ -33,6 +36,7 @@
       <root url="file://F:/OneDrive/go/go_work/src/github.com/go-sql-driver/MySQL/.git" />
       <root url="file://$PROJECT_DIR$/../github.com/nsf/gocode/_gccgo" />
       <root url="file://$PROJECT_DIR$/../github.com/nsf/gocode/_goremote" />
+      <root url="file://F:/Perforce/yaohong_yaohong-PC_7228/zombiebrother/master/server/go/src/dirserver/.idea" />
       <root url="file://$PROJECT_DIR$/../github.com/nsf/gocode/_testing" />
       <root url="file://F:/OneDrive/go/go_work/src/github.com/nsf/gocode/_goremote" />
       <root url="file://F:/OneDrive/go/go_work/src/github.com/nsf/gocode/_gccgo" />

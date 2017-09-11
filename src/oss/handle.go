@@ -349,3 +349,22 @@ func ossDeleteTable(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("delete table success."))
 }
 
+func useCdk(w http.ResponseWriter, r *http.Request) {
+	fmt.Printf("useCdk\n")
+
+	if r.Method != "POST" {
+		w.Write(NewRspByte("error http Method, %v", r.Method))
+		return
+	}
+
+	r.ParseForm()
+	packKey := r.Form.Get("pack_key")
+	log.Printf("use cdk: %s\n", packKey)
+	bin, err := gTableMgr.UseCdk(packKey)
+	if err !=nil {
+		log.Printf("use cdk error, %s.\n", err.Error())
+		return
+	}
+
+	w.Write(bin)
+}

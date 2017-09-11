@@ -1,0 +1,8 @@
+# Prerequisites
+*.d
+.idea/
+obj/
+*.exe
+*.suo
+
+
