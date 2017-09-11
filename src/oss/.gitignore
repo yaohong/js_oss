@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Prerequisites
 *.d
 .idea/
@@ -6,3 +7,6 @@ obj/
 *.suo
 
 
+=======
+.idea/
+>>>>>>> origin/master
