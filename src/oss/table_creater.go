@@ -255,7 +255,7 @@ func (self *TableMgr)InsertTableData(tableName string, tableField map[string]int
 
 
 func (self *TableMgr)UseCdk(cdk string) ([]byte, error) {
-	sqlStr := fmt.Sprintf("select coins, stones from game_cdk where pack_key='%s''", cdk)
+	sqlStr := fmt.Sprintf("select coins, stones from game_cdk where pack_key='%s'", cdk)
 	rows ,err := self.db.Query(sqlStr)
 	if err != nil {
 		return nil, err

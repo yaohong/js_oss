@@ -352,7 +352,7 @@ func ossDeleteTable(w http.ResponseWriter, r *http.Request) {
 func useCdk(w http.ResponseWriter, r *http.Request) {
 	fmt.Printf("useCdk\n")
 
-	if r.Method != "POST" {
+	if r.Method != "GET" {
 		w.Write(NewRspByte("error http Method, %v", r.Method))
 		return
 	}
